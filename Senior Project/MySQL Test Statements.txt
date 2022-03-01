@@ -1,0 +1,66 @@
+#Initial Test Set-Up For DTP MySQL Server
+
+#Drop Database SQL Statment for dropping test DTP database
+DROP DATABASE IF EXISTS dtp;
+
+#Create Database SQL Statment for creating test DTP database
+CREATE DATABASE dtp;
+
+#Selects newly created  database
+USE dtp;
+
+#Create Table User SQL Statment for creating test table User for test DTP database
+CREATE TABLE user(
+	user_id int NOT NULL AUTO_INCREMENT,
+	username varChar(25) NOT NULL UNIQUE,
+	user_email varChar(50) NOT NULL UNIQUE,
+	user_password varChar(50) NOT NULL,
+	user_token varChar(10) UNIQUE,
+	user_last_login DATETIME,
+	PRIMARY KEY (user_id)	
+);
+
+#Create Table Games SQL Statement for creating test table Game for test DTP database
+CREATE TABLE game(
+	game_id int NOT NULL AUTO_INCREMENT,
+	game_name varChar(100) NOT NULL,
+	game_publisher varChar(50) NOT NULL,
+	game_release_year int,
+	PRIMARY KEY (game_id)	
+);
+
+#Create Table GameModes SQL Statement for creating test table Gamemodes for test DTP database
+CREATE TABLE gamemode(
+	gamemode_id int NOT NULL,
+	gamemode_name varChar(50) NOT NULL,
+	game_id int NOT NULL,
+	gamemode_nop int NOT NULL,
+	PRIMARY KEY (gamemode_id, game_id),
+	FOREIGN KEY (game_id) REFERENCES game(game_id)	
+);
+
+#Create Table QueuedPlayers SQL Statement for creating test table QueuuedPLayers for test DTP database
+CREATE TABLE queuedplayer(
+	game_id int NOT NULL,
+	gamemode_id int NOT NULL,
+	user_id int NOT NULL,
+	user_is_host BOOLEAN DEFAULT 0 NOT NULL,
+	user_queued_time DATETIME,
+	PRIMARY KEY (game_id, gamemode_id, user_id),
+	FOREIGN KEY (game_id) REFERENCES gamemode(game_id),
+	FOREIGN KEY (gamemode_id) REFERENCES gamemode(gamemode_id),
+	FOREIGN KEY (user_id) REFERENCES user(user_id)	
+);
+
+#Insert Games into  DTP database
+INSERT INTO `dtp`.`game` (`game_name`, `game_publisher`, `game_release_year`) VALUES ('Rocket League', 'Psyonix', '2015');
+
+#Insert GamesModes into  DTP database
+INSERT INTO `dtp`.`gamemode` (`gamemode_name`, `game_id`, `gamemode_nop`) VALUES ('1 V 1', '1', '2'), ('2 V 2', '1', '4'), ('3 V 3', '1', '6');
+
+
+
+#Updates token  and last login attibute in User table
+UPDATE user
+SET user_token = user.token AND user_last_login = DateTime
+WHERE username = username;
